@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Thread;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ThreadsController extends Controller
 {
@@ -12,6 +13,13 @@ class ThreadsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+
+    public  function __construct()
+    {
+        $this->middleware('auth')->only('store');
+    }
+
     public function index()
     {
         //
@@ -39,6 +47,15 @@ class ThreadsController extends Controller
     public function store(Request $request)
     {
         //
+
+        $thread = Thread::create([
+            'user_id'=>Auth::user()->id,
+            'title'=>request('title'),
+            'body' => request('body')
+
+        ]);
+
+        return redirect($thread->path());
     }
 
     /**
