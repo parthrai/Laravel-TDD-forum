@@ -27,12 +27,13 @@ class CreateThreadsTest extends TestCase
         // When we hit the endpoint to create new thread
             //$thread = factory('App\Thread')->make();
 
-            $thread = create('App\Thread'); // simplyfying the above line
+            $thread = make('App\Thread'); // simplyfying the above line
 
-            $this->post('/threads',$thread->toArray());
+            $response = $this->post('/threads',$thread->toArray());
+
 
         // then, when we visit the thread page
-            $this->get($thread->path())
+            $this->get($response->headers->get('Location'))
 
 
         // we shoud see the new thread
@@ -49,6 +50,36 @@ class CreateThreadsTest extends TestCase
 
         $this->get('/threads/create')
             ->assertRedirect('/login');
+
+    }
+
+    function test_a_thread_requires_a_title(){
+
+        $this->publishThread(['body'=>null])
+            ->assertSessionHasErrors('body');
+    }
+
+
+    function test_a_thread_requires_a_valid_channel(){
+
+        factory('App\Channel',2)->create();
+
+        $this->publishThread(['channel_id'=>null])
+            ->assertSessionHasErrors('channel_id');
+    }
+
+    public function publishThread($overrides = []){
+
+        $this->expectException('Illuminate\Validation\ValidationException');
+
+        $this->signIn();
+
+        $thread = make('App\Thread',['title'=>null]);
+
+
+
+       return $this->post('/threads',$thread->toArray());
+
 
     }
 
