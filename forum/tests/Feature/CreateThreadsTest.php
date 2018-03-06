@@ -27,7 +27,7 @@ class CreateThreadsTest extends TestCase
         // When we hit the endpoint to create new thread
             //$thread = factory('App\Thread')->make();
 
-            $thread = make('App\Thread'); // simplyfying the above line
+            $thread = create('App\Thread'); // simplyfying the above line
 
             $this->post('/threads',$thread->toArray());
 
@@ -44,9 +44,13 @@ class CreateThreadsTest extends TestCase
     function test_guests_may_not_create_threads(){
 
         $this->expectException('Illuminate\Auth\AuthenticationException');
+        $this->post('/threads/')
+            ->assertRedirect('/login');
 
-        $thread = factory('App\Thread')->make();
+        $this->get('/threads/create')
+            ->assertRedirect('/login');
 
-        $this->post('/threads',$thread->toArray());
     }
+
+
 }

@@ -8,6 +8,9 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
+
+
+
     protected function signIn($user = null){
 
         $user = $user ?: create('App\User');
@@ -15,4 +18,6 @@ abstract class TestCase extends BaseTestCase
 
         return $this;
     }
+
+
 }

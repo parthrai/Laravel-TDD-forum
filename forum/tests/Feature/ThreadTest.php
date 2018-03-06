@@ -37,7 +37,7 @@ class ThreadTest extends TestCase
 
     function test_a_user_can_read_a_single_thread(){
 
-        $response = $this->get('/threads/'.$this->thread->id);
+        $response = $this->get($this->thread->path());
 
         $response->assertSee($this->thread->title);
     }
@@ -50,8 +50,17 @@ class ThreadTest extends TestCase
         //when we visit the thread page
         //we should see the reply
 
-        $response= $this->get('/threads/'.$this->thread->id)
+        $response= $this->get($this->thread->path())
             ->assertSee($reply->body);
 
+    }
+
+
+
+    function test_a_thread_belongs_to_a_channel(){
+
+        $thread = create('App\Thread');
+
+        $this->assertInstanceOf('App\Channel',$thread->channel);
     }
 }
